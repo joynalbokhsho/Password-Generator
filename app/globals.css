@@ -21,15 +21,15 @@
   }
   
   .btn-primary {
-    @apply bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg;
+    @apply bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white font-semibold py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg;
   }
   
   .btn-secondary {
-    @apply bg-white/10 hover:bg-white/20 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 border border-white/20;
+    @apply bg-white/10 hover:bg-white/20 text-white font-semibold py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg transition-all duration-300 transform hover:scale-105 border border-white/20;
   }
   
   .input-field {
-    @apply bg-white/10 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300;
+    @apply bg-white/10 border border-white/20 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-300;
   }
   
   .card {
@@ -56,11 +56,11 @@
 
 /* Custom slider styles */
 .slider::-webkit-slider-thumb {
-  @apply appearance-none w-6 h-6 bg-primary-500 rounded-full cursor-pointer shadow-lg;
+  @apply appearance-none w-5 h-5 sm:w-6 sm:h-6 bg-primary-500 rounded-full cursor-pointer shadow-lg;
 }
 
 .slider::-moz-range-thumb {
-  @apply w-6 h-6 bg-primary-500 rounded-full cursor-pointer border-0 shadow-lg;
+  @apply w-5 h-5 sm:w-6 sm:h-6 bg-primary-500 rounded-full cursor-pointer border-0 shadow-lg;
 }
 
 .slider::-webkit-slider-track {

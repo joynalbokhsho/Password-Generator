@@ -120,12 +120,9 @@ export default function Home() {
 
   const copyButtonVariants = {
     hover: { 
-      scale: 1.1,
-      rotate: 5,
       transition: { duration: 0.2 }
     },
     tap: { 
-      scale: 0.9,
       transition: { duration: 0.1 }
     }
   };
@@ -209,8 +206,8 @@ export default function Home() {
       </div>
 
       {/* Header */}
-      <header className="relative z-10 p-6">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
+      <header className="relative z-10 p-4 sm:p-6">
+        <div className="max-w-7xl mx-auto flex justify-center items-center">
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -221,10 +218,10 @@ export default function Home() {
               animate={{ rotate: [0, 360] }}
               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
             >
-              <Shield className="w-8 h-8 text-primary-400" />
+              <Shield className="w-6 h-6 sm:w-8 sm:h-8 text-primary-400" />
             </motion.div>
             <motion.h1 
-              className="text-2xl font-bold gradient-text"
+              className="text-xl sm:text-2xl font-bold gradient-text"
               animate={{ 
                 backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
               }}
@@ -241,22 +238,22 @@ export default function Home() {
       </header>
 
       {/* Main Content */}
-      <main className="relative z-10 flex items-center justify-center min-h-[calc(100vh-120px)] p-6">
+      <main className="relative z-10 flex items-center justify-center min-h-[calc(100vh-120px)] p-4 sm:p-6">
         <motion.div
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="w-full max-w-2xl"
+          className="w-full max-w-2xl px-2 sm:px-0"
         >
-          <motion.div 
-            className="card"
-            variants={itemVariants}
-            whileHover={{ 
-              scale: 1.02,
-              boxShadow: "0 25px 50px rgba(0, 0, 0, 0.3)",
-            }}
-            transition={{ duration: 0.3 }}
-          >
+                      <motion.div 
+              className="card p-4 sm:p-6"
+              variants={itemVariants}
+              whileHover={{ 
+                scale: 1.02,
+                boxShadow: "0 25px 50px rgba(0, 0, 0, 0.3)",
+              }}
+              transition={{ duration: 0.3 }}
+            >
             <motion.div
               variants={itemVariants}
               className="text-center mb-8"
@@ -272,16 +269,16 @@ export default function Home() {
                 }}
                 className="mb-4"
               >
-                <Sparkles className="w-12 h-12 text-primary-400 mx-auto" />
+                <Sparkles className="w-8 h-8 sm:w-12 sm:h-12 text-primary-400 mx-auto" />
               </motion.div>
               <motion.h2 
-                className="text-3xl font-bold text-white mb-2"
+                className="text-2xl sm:text-3xl font-bold text-white mb-2"
                 variants={itemVariants}
               >
                 Generate Secure Passwords
               </motion.h2>
               <motion.p 
-                className="text-white/70"
+                className="text-sm sm:text-base text-white/70"
                 variants={itemVariants}
               >
                 Create strong, unique passwords with customizable options
@@ -303,7 +300,7 @@ export default function Home() {
                   value={safeDisplayedPassword}
                   readOnly
                   placeholder="Your generated password will appear here..."
-                  className="input-field w-full text-lg font-mono pr-12"
+                  className="input-field w-full text-base sm:text-lg font-mono pr-12"
                   animate={{
                     borderColor: password ? "rgba(59, 130, 246, 0.5)" : "rgba(255, 255, 255, 0.2)",
                   }}
@@ -328,11 +325,15 @@ export default function Home() {
                 
                 <motion.button
                   onClick={copyToClipboard}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/70 hover:text-white transition-colors"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/70 hover:text-white transition-colors flex items-center justify-center w-8 h-8"
                   title="Copy to clipboard"
                   variants={copyButtonVariants}
                   whileHover="hover"
                   whileTap="tap"
+                  style={{ 
+                    marginTop: '-4px',
+                    transformOrigin: 'center'
+                  }}
                 >
                   <AnimatePresence mode="wait">
                     {copied ? (
@@ -342,6 +343,7 @@ export default function Home() {
                         animate={{ scale: 1, rotate: 0 }}
                         exit={{ scale: 0, rotate: 180 }}
                         transition={{ duration: 0.2 }}
+                        className="flex items-center justify-center w-5 h-5"
                       >
                         <Check className="w-5 h-5 text-green-400" />
                       </motion.div>
@@ -352,6 +354,7 @@ export default function Home() {
                         animate={{ scale: 1, rotate: 0 }}
                         exit={{ scale: 0, rotate: 180 }}
                         transition={{ duration: 0.2 }}
+                        className="flex items-center justify-center w-5 h-5"
                       >
                         <Copy className="w-5 h-5" />
                       </motion.div>
@@ -389,14 +392,14 @@ export default function Home() {
               variants={itemVariants}
               className="mb-8"
             >
-              <motion.button
-                onClick={generatePassword}
-                className="btn-primary w-full flex items-center justify-center space-x-2 text-lg relative overflow-hidden"
-                variants={buttonVariants}
-                whileHover="hover"
-                whileTap="tap"
-                disabled={isGenerating || isTyping}
-              >
+                              <motion.button
+                  onClick={generatePassword}
+                  className="btn-primary w-full flex items-center justify-center space-x-2 text-base sm:text-lg relative overflow-hidden"
+                  variants={buttonVariants}
+                  whileHover="hover"
+                  whileTap="tap"
+                  disabled={isGenerating || isTyping}
+                >
                 <motion.div
                   animate={{ rotate: isGenerating ? 360 : 0 }}
                   transition={{ 
@@ -432,7 +435,7 @@ export default function Home() {
                 whileHover={{ scale: 1.02 }}
                 transition={{ duration: 0.2 }}
               >
-                <label className="block text-white font-medium mb-3">
+                <label className="block text-white font-medium mb-3 text-sm sm:text-base">
                   Password Length: <span className="text-primary-400">{length}</span>
                 </label>
                 <motion.div
@@ -456,7 +459,7 @@ export default function Home() {
               </motion.div>
 
               <motion.div 
-                className="grid grid-cols-2 gap-4"
+                className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4"
                 variants={itemVariants}
               >
                 {[
@@ -467,7 +470,7 @@ export default function Home() {
                 ].map((option, index) => (
                   <motion.label
                     key={index}
-                    className="flex items-center space-x-3 cursor-pointer p-2 rounded-lg hover:bg-white/5 transition-colors"
+                    className="flex items-center space-x-2 sm:space-x-3 cursor-pointer p-2 rounded-lg hover:bg-white/5 transition-colors"
                     variants={itemVariants}
                     whileHover={{ scale: 1.05, x: 5 }}
                     whileTap={{ scale: 0.95 }}
@@ -484,7 +487,7 @@ export default function Home() {
                         className="w-4 h-4 text-primary-600 bg-white/10 border-white/20 rounded focus:ring-primary-500"
                       />
                     </motion.div>
-                    <span className="text-white">{option.label}</span>
+                    <span className="text-white text-sm sm:text-base">{option.label}</span>
                   </motion.label>
                 ))}
               </motion.div>
