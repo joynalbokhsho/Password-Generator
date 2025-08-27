@@ -2,21 +2,16 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Copy, RefreshCw, Shield, Lock, User, LogOut } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import AuthModal from '@/components/AuthModal';
+import { Copy, RefreshCw, Shield } from 'lucide-react';
 import PasswordStrength from '@/components/PasswordStrength';
-import LoadingSpinner from '@/components/LoadingSpinner';
 
 export default function Home() {
-  const { user, logout, loading } = useAuth();
   const [password, setPassword] = useState('');
   const [length, setLength] = useState(16);
   const [includeUppercase, setIncludeUppercase] = useState(true);
   const [includeLowercase, setIncludeLowercase] = useState(true);
   const [includeNumbers, setIncludeNumbers] = useState(true);
   const [includeSymbols, setIncludeSymbols] = useState(true);
-  const [showAuthModal, setShowAuthModal] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const generatePassword = () => {
@@ -51,18 +46,6 @@ export default function Home() {
       setTimeout(() => setCopied(false), 2000);
     }
   };
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
-  };
-
-  if (loading) {
-    return <LoadingSpinner />;
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-dark-900 via-dark-800 to-dark-900 relative overflow-hidden">
@@ -105,38 +88,6 @@ export default function Home() {
             <Shield className="w-8 h-8 text-primary-400" />
             <h1 className="text-2xl font-bold gradient-text">PasswordGen</h1>
           </motion.div>
-
-          <div className="flex items-center space-x-4">
-            {user ? (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="flex items-center space-x-3"
-              >
-                <div className="flex items-center space-x-2 text-white">
-                  <User className="w-5 h-5" />
-                  <span className="text-sm">{user.email}</span>
-                </div>
-                <button
-                  onClick={handleLogout}
-                  className="btn-secondary flex items-center space-x-2"
-                >
-                  <LogOut className="w-4 h-4" />
-                  <span>Logout</span>
-                </button>
-              </motion.div>
-            ) : (
-              <motion.button
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                onClick={() => setShowAuthModal(true)}
-                className="btn-primary flex items-center space-x-2"
-              >
-                <Lock className="w-4 h-4" />
-                <span>Login / Signup</span>
-              </motion.button>
-            )}
-          </div>
         </div>
       </header>
 
@@ -282,11 +233,6 @@ export default function Home() {
           </div>
         </motion.div>
       </main>
-
-      {/* Auth Modal */}
-      {showAuthModal && (
-        <AuthModal onClose={() => setShowAuthModal(false)} />
-      )}
     </div>
   );
 }
