@@ -1,20 +1,51 @@
 'use client';
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Copy, RefreshCw, Shield } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Copy, RefreshCw, Shield, Check, Sparkles } from 'lucide-react';
 import PasswordStrength from '@/components/PasswordStrength';
 
 export default function Home() {
   const [password, setPassword] = useState('');
+  const [displayedPassword, setDisplayedPassword] = useState('');
   const [length, setLength] = useState(16);
   const [includeUppercase, setIncludeUppercase] = useState(true);
   const [includeLowercase, setIncludeLowercase] = useState(true);
   const [includeNumbers, setIncludeNumbers] = useState(true);
   const [includeSymbols, setIncludeSymbols] = useState(true);
   const [copied, setCopied] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
 
-  const generatePassword = () => {
+  // Typewriter effect
+  useEffect(() => {
+    if (password && !isTyping) {
+      setIsTyping(true);
+      setDisplayedPassword('');
+      
+      let currentIndex = 0;
+      const typeInterval = setInterval(() => {
+        if (currentIndex < password.length) {
+          setDisplayedPassword(password.substring(0, currentIndex + 1));
+          currentIndex++;
+        } else {
+          clearInterval(typeInterval);
+          setIsTyping(false);
+        }
+      }, 50); // Adjust speed here (lower = faster)
+
+      return () => clearInterval(typeInterval);
+    }
+  }, [password]);
+
+  const generatePassword = async () => {
+    setIsGenerating(true);
+    setDisplayedPassword(''); // Clear displayed password immediately
+    setIsTyping(false); // Reset typing state
+    
+    // Add a small delay for animation effect
+    await new Promise(resolve => setTimeout(resolve, 300));
+    
     const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const lowercase = 'abcdefghijklmnopqrstuvwxyz';
     const numbers = '0123456789';
@@ -28,6 +59,7 @@ export default function Home() {
 
     if (chars === '') {
       alert('Please select at least one character type!');
+      setIsGenerating(false);
       return;
     }
 
@@ -37,6 +69,7 @@ export default function Home() {
     }
 
     setPassword(result);
+    setIsGenerating(false);
   };
 
   const copyToClipboard = async () => {
@@ -47,15 +80,77 @@ export default function Home() {
     }
   };
 
+  // Ensure displayed password never exceeds actual password
+  const safeDisplayedPassword = displayedPassword.length <= password.length ? displayedPassword : password;
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: 0.6,
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: "easeOut"
+      }
+    }
+  };
+
+  const buttonVariants = {
+    hover: { 
+      scale: 1.05,
+      boxShadow: "0 20px 40px rgba(0, 0, 0, 0.3)",
+      transition: { duration: 0.2 }
+    },
+    tap: { 
+      scale: 0.95,
+      transition: { duration: 0.1 }
+    }
+  };
+
+  const copyButtonVariants = {
+    hover: { 
+      scale: 1.1,
+      rotate: 5,
+      transition: { duration: 0.2 }
+    },
+    tap: { 
+      scale: 0.9,
+      transition: { duration: 0.1 }
+    }
+  };
+
+  const checkboxVariants = {
+    checked: { 
+      scale: 1.1,
+      transition: { duration: 0.2 }
+    },
+    unchecked: { 
+      scale: 1,
+      transition: { duration: 0.2 }
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-dark-900 via-dark-800 to-dark-900 relative overflow-hidden">
-      {/* Animated background elements */}
+      {/* Enhanced animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div
           className="absolute top-20 left-20 w-72 h-72 bg-primary-500/10 rounded-full blur-3xl"
           animate={{
             x: [0, 100, 0],
             y: [0, -50, 0],
+            scale: [1, 1.2, 1],
           }}
           transition={{
             duration: 20,
@@ -68,6 +163,7 @@ export default function Home() {
           animate={{
             x: [0, -100, 0],
             y: [0, 50, 0],
+            scale: [1, 0.8, 1],
           }}
           transition={{
             duration: 25,
@@ -75,6 +171,41 @@ export default function Home() {
             ease: "linear"
           }}
         />
+        <motion.div
+          className="absolute top-1/2 left-1/2 w-64 h-64 bg-primary-400/5 rounded-full blur-2xl"
+          animate={{
+            x: [-50, 50, -50],
+            y: [-30, 30, -30],
+            scale: [1, 1.3, 1],
+          }}
+          transition={{
+            duration: 30,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+        />
+        {/* Floating particles */}
+        {[...Array(6)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-2 h-2 bg-primary-400/30 rounded-full"
+            style={{
+              left: `${20 + i * 15}%`,
+              top: `${30 + (i % 2) * 40}%`,
+            }}
+            animate={{
+              y: [0, -20, 0],
+              opacity: [0.3, 0.8, 0.3],
+              scale: [1, 1.5, 1],
+            }}
+            transition={{
+              duration: 3 + i * 0.5,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: i * 0.2,
+            }}
+          />
+        ))}
       </div>
 
       {/* Header */}
@@ -83,10 +214,28 @@ export default function Home() {
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="flex items-center space-x-2"
+            whileHover={{ scale: 1.05 }}
+            className="flex items-center space-x-2 cursor-pointer"
           >
-            <Shield className="w-8 h-8 text-primary-400" />
-            <h1 className="text-2xl font-bold gradient-text">PasswordGen</h1>
+            <motion.div
+              animate={{ rotate: [0, 360] }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            >
+              <Shield className="w-8 h-8 text-primary-400" />
+            </motion.div>
+            <motion.h1 
+              className="text-2xl font-bold gradient-text"
+              animate={{ 
+                backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+              }}
+              transition={{ 
+                duration: 3, 
+                repeat: Infinity, 
+                ease: "linear" 
+              }}
+            >
+              PasswordGen
+            </motion.h1>
           </motion.div>
         </div>
       </header>
@@ -94,143 +243,253 @@ export default function Home() {
       {/* Main Content */}
       <main className="relative z-10 flex items-center justify-center min-h-[calc(100vh-120px)] p-6">
         <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
           className="w-full max-w-2xl"
         >
-          <div className="card">
+          <motion.div 
+            className="card"
+            variants={itemVariants}
+            whileHover={{ 
+              scale: 1.02,
+              boxShadow: "0 25px 50px rgba(0, 0, 0, 0.3)",
+            }}
+            transition={{ duration: 0.3 }}
+          >
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
+              variants={itemVariants}
               className="text-center mb-8"
             >
-              <h2 className="text-3xl font-bold text-white mb-2">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ 
+                  type: "spring", 
+                  stiffness: 260, 
+                  damping: 20,
+                  delay: 0.3 
+                }}
+                className="mb-4"
+              >
+                <Sparkles className="w-12 h-12 text-primary-400 mx-auto" />
+              </motion.div>
+              <motion.h2 
+                className="text-3xl font-bold text-white mb-2"
+                variants={itemVariants}
+              >
                 Generate Secure Passwords
-              </h2>
-              <p className="text-white/70">
+              </motion.h2>
+              <motion.p 
+                className="text-white/70"
+                variants={itemVariants}
+              >
                 Create strong, unique passwords with customizable options
-              </p>
+              </motion.p>
             </motion.div>
 
             {/* Password Display */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3 }}
+              variants={itemVariants}
               className="mb-6"
             >
-              <div className="relative">
-                <input
+              <motion.div 
+                className="relative"
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.2 }}
+              >
+                <motion.input
                   type="text"
-                  value={password}
+                  value={safeDisplayedPassword}
                   readOnly
                   placeholder="Your generated password will appear here..."
                   className="input-field w-full text-lg font-mono pr-12"
+                  animate={{
+                    borderColor: password ? "rgba(59, 130, 246, 0.5)" : "rgba(255, 255, 255, 0.2)",
+                  }}
+                  transition={{ duration: 0.3 }}
                 />
-                <button
+                
+                {/* Typewriter cursor */}
+                <AnimatePresence>
+                  {isTyping && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: [0, 1, 0] }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.8, repeat: Infinity }}
+                      className="absolute top-1/2 transform -translate-y-1/2 w-0.5 h-6 bg-primary-400"
+                      style={{
+                        left: `${safeDisplayedPassword.length * 0.6 + 1}rem`,
+                      }}
+                    />
+                  )}
+                </AnimatePresence>
+                
+                <motion.button
                   onClick={copyToClipboard}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/70 hover:text-white transition-colors"
                   title="Copy to clipboard"
+                  variants={copyButtonVariants}
+                  whileHover="hover"
+                  whileTap="tap"
                 >
-                  <Copy className="w-5 h-5" />
-                </button>
-              </div>
-              {copied && (
-                <motion.p
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="text-green-400 text-sm mt-2 text-center"
-                >
-                  Password copied to clipboard!
-                </motion.p>
-              )}
+                  <AnimatePresence mode="wait">
+                    {copied ? (
+                      <motion.div
+                        key="check"
+                        initial={{ scale: 0, rotate: -180 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        exit={{ scale: 0, rotate: 180 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <Check className="w-5 h-5 text-green-400" />
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key="copy"
+                        initial={{ scale: 0, rotate: -180 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        exit={{ scale: 0, rotate: 180 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        <Copy className="w-5 h-5" />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.button>
+              </motion.div>
+              
+              <AnimatePresence>
+                {copied && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -10, scale: 0.8 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -10, scale: 0.8 }}
+                    className="text-green-400 text-sm mt-2 text-center"
+                  >
+                    Password copied to clipboard!
+                  </motion.p>
+                )}
+              </AnimatePresence>
               
               {/* Password Strength Indicator */}
-              <PasswordStrength password={password} />
+              <motion.div
+                variants={itemVariants}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.4 }}
+              >
+                <PasswordStrength password={password} />
+              </motion.div>
             </motion.div>
 
             {/* Generate Button */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
+              variants={itemVariants}
               className="mb-8"
             >
-              <button
+              <motion.button
                 onClick={generatePassword}
-                className="btn-primary w-full flex items-center justify-center space-x-2 text-lg"
+                className="btn-primary w-full flex items-center justify-center space-x-2 text-lg relative overflow-hidden"
+                variants={buttonVariants}
+                whileHover="hover"
+                whileTap="tap"
+                disabled={isGenerating || isTyping}
               >
-                <RefreshCw className="w-5 h-5" />
-                <span>Generate Password</span>
-              </button>
+                <motion.div
+                  animate={{ rotate: isGenerating ? 360 : 0 }}
+                  transition={{ 
+                    duration: isGenerating ? 1 : 0,
+                    repeat: isGenerating ? Infinity : 0,
+                    ease: "linear"
+                  }}
+                >
+                  <RefreshCw className="w-5 h-5" />
+                </motion.div>
+                <span>
+                  {isGenerating ? 'Generating...' : 
+                   isTyping ? 'Typing...' : 'Generate Password'}
+                </span>
+                
+                {/* Button shine effect */}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                  initial={{ x: '-100%' }}
+                  whileHover={{ x: '100%' }}
+                  transition={{ duration: 0.6 }}
+                />
+              </motion.button>
             </motion.div>
 
             {/* Options */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
+              variants={itemVariants}
               className="space-y-6"
             >
-              <div>
+              <motion.div
+                variants={itemVariants}
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.2 }}
+              >
                 <label className="block text-white font-medium mb-3">
-                  Password Length: {length}
+                  Password Length: <span className="text-primary-400">{length}</span>
                 </label>
-                <input
-                  type="range"
-                  min="8"
-                  max="64"
-                  value={length}
-                  onChange={(e) => setLength(Number(e.target.value))}
-                  className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <label className="flex items-center space-x-3 cursor-pointer">
+                <motion.div
+                  className="relative"
+                  whileHover={{ scale: 1.02 }}
+                >
                   <input
-                    type="checkbox"
-                    checked={includeUppercase}
-                    onChange={(e) => setIncludeUppercase(e.target.checked)}
-                    className="w-4 h-4 text-primary-600 bg-white/10 border-white/20 rounded focus:ring-primary-500"
+                    type="range"
+                    min="8"
+                    max="64"
+                    value={length}
+                    onChange={(e) => setLength(Number(e.target.value))}
+                    className="w-full h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
                   />
-                  <span className="text-white">Uppercase (A-Z)</span>
-                </label>
+                  <motion.div
+                    className="absolute top-0 left-0 h-2 bg-primary-500 rounded-lg"
+                    style={{ width: `${((length - 8) / (64 - 8)) * 100}%` }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </motion.div>
+              </motion.div>
 
-                <label className="flex items-center space-x-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={includeLowercase}
-                    onChange={(e) => setIncludeLowercase(e.target.checked)}
-                    className="w-4 h-4 text-primary-600 bg-white/10 border-white/20 rounded focus:ring-primary-500"
-                  />
-                  <span className="text-white">Lowercase (a-z)</span>
-                </label>
-
-                <label className="flex items-center space-x-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={includeNumbers}
-                    onChange={(e) => setIncludeNumbers(e.target.checked)}
-                    className="w-4 h-4 text-primary-600 bg-white/10 border-white/20 rounded focus:ring-primary-500"
-                  />
-                  <span className="text-white">Numbers (0-9)</span>
-                </label>
-
-                <label className="flex items-center space-x-3 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={includeSymbols}
-                    onChange={(e) => setIncludeSymbols(e.target.checked)}
-                    className="w-4 h-4 text-primary-600 bg-white/10 border-white/20 rounded focus:ring-primary-500"
-                  />
-                  <span className="text-white">Symbols (!@#$%)</span>
-                </label>
-              </div>
+              <motion.div 
+                className="grid grid-cols-2 gap-4"
+                variants={itemVariants}
+              >
+                {[
+                  { state: includeUppercase, setState: setIncludeUppercase, label: 'Uppercase (A-Z)' },
+                  { state: includeLowercase, setState: setIncludeLowercase, label: 'Lowercase (a-z)' },
+                  { state: includeNumbers, setState: setIncludeNumbers, label: 'Numbers (0-9)' },
+                  { state: includeSymbols, setState: setIncludeSymbols, label: 'Symbols (!@#$%)' }
+                ].map((option, index) => (
+                  <motion.label
+                    key={index}
+                    className="flex items-center space-x-3 cursor-pointer p-2 rounded-lg hover:bg-white/5 transition-colors"
+                    variants={itemVariants}
+                    whileHover={{ scale: 1.05, x: 5 }}
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <motion.div
+                      variants={checkboxVariants}
+                      animate={option.state ? "checked" : "unchecked"}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={option.state}
+                        onChange={(e) => option.setState(e.target.checked)}
+                        className="w-4 h-4 text-primary-600 bg-white/10 border-white/20 rounded focus:ring-primary-500"
+                      />
+                    </motion.div>
+                    <span className="text-white">{option.label}</span>
+                  </motion.label>
+                ))}
+              </motion.div>
             </motion.div>
-          </div>
+          </motion.div>
         </motion.div>
       </main>
     </div>
